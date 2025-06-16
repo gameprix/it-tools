@@ -13,15 +13,15 @@ home:
   follow:
     title: 'Vind je IT-tools leuk?'
     p1: 'Geef ons een ster op'
-    githubRepository: 'IT-Tools GitHub-repository'
+    githubRepository: 'IT-Tools GitHub repository'
     p2: 'of volg ons op'
-    twitterXAccount: 'IT-Tools X-account'
+    twitterXAccount: 'IT-Tools X account'
     thankYou: 'Bedankt!'
   nav:
     github: 'GitHub-repository'
-    githubRepository: 'IT-Tools GitHub-repository'
+    githubRepository: 'IT-Tools GitHub repository'
     twitterX: 'X-account'
-    twitterXAccount: 'IT Tools X-account'
+    twitterXAccount: 'IT Tools X account'
     about: 'Over IT-Tools'
     aboutLabel: 'Over'
     darkMode: 'Donkere modus'
@@ -63,7 +63,7 @@ tools:
     crypto: Crypto
     converter: Converter
     web: Web
-    images and videos: 'Afbeeldingen & Video\'s'
+    images and videos: 'Afbeeldingen & Video’s'
     development: Ontwikkeling
     network: Netwerk
     math: Wiskunde
@@ -150,7 +150,7 @@ tools:
     description: Maak een string veilig voor URL's, bestandsnamen en ID’s.
 
   encryption:
-    title: Versleutelen / ontsleutelen tekst
+    title: Versleutel / ontsleutel tekst
     description: Versleutel platte tekst en ontsleutel gecodeerde tekst met crypto-algoritmes zoals AES, TripleDES, Rabbit of RC4.
 
   random-port-generator:
@@ -331,7 +331,7 @@ tools:
 
   json-minify:
     title: JSON verkleinen
-    description: Verkleur en comprimeer je JSON door onnodige witruimtes te verwijderen.
+    description: Minimaliseer en comprimeer je JSON door onnodige witruimtes te verwijderen.
 
   ulid-generator:
     title: ULID-generator
@@ -375,7 +375,7 @@ tools:
 
   ipv4-range-expander:
     title: IPv4-bereik uitbreider
-    description: Gegeven een begin- en eind-IP-adres, berekent deze tool een geldig IPv4-subnet en zijn CIDR-notatie.
+    description: Geef een begin- en eind-IP-adres, deze tool berekent een geldig IPv4-subnet en zijn CIDR-notatie.
 
   text-diff:
     title: Tekst-diff
