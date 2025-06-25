@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { dateToEpoch, epochToDate } from './epoch-converter.service.ts';
+import { type DateParts, dateToEpoch, epochToDate, getISODateString } from './epoch-converter.service.ts';
 
 const epochInput = ref('');
-const dateOutput = ref('');
+const dateOutput = ref<{ local: string; utc: string } | null>(null);
 const epochOutput = ref('');
 const error = ref<string | null>(null);
 
-const dateParts = ref({
+const epochInputError = ref<string | null>(null);
+const dateInputError = ref<string | null>(null);
+
+const dateParts = ref<DateParts>({
   year: '',
   month: '',
   day: '',
@@ -16,32 +19,84 @@ const dateParts = ref({
   second: '',
 });
 
+/**
+ * Converts a Unix epoch timestamp to human-readable date strings
+ * Accepts seconds (10-digit) or milliseconds (13-digit)
+ */
 function convertEpochToDate() {
   error.value = null;
   try {
     dateOutput.value = epochToDate(epochInput.value);
   }
   catch (e: any) {
-    error.value = e.message;
+    epochInputError.value = e.message;
   }
 }
 
-function convertDateToEpoch() {
-  error.value = null;
+/**
+ * Converts a Unix epoch timestamp to human-readable date strings
+ * Accepts seconds (10-digit) or milliseconds (13-digit)
+ */
+function convertDateToEpochLocal() {
   try {
-    const { year, month, day, hour, minute, second } = dateParts.value;
-
-    const isoString = `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:${pad(second)}`;
+    validateDateParts(dateParts.value);
+    const isoString = getISODateString(dateParts.value);
     epochOutput.value = dateToEpoch(isoString);
+    dateInputError.value = null;
   }
   catch (e: any) {
-    error.value = e.message;
+    epochOutput.value = '';
+    dateInputError.value = e.message;
   }
 }
 
-function pad(value: string): string {
-  return value.toString().padStart(2, '0');
+/**
+ * Converts UTC date string parts to epoch (seconds)
+ */
+function convertDateToEpochUTC() {
+  try {
+    validateDateParts(dateParts.value);
+    const isoString = getISODateString(dateParts.value);
+    epochOutput.value = dateToEpoch(isoString, { utc: true });
+    dateInputError.value = null;
+  }
+  catch (e: any) {
+    epochOutput.value = '';
+    dateInputError.value = e.message;
+  }
 }
+
+function validateDateParts(parts: DateParts): void {
+  const { year, month, day, hour, minute, second } = parts;
+
+  if (!/^\d{4}$/.test(year)) {
+    throw new Error('Year must be 4 digits');
+  }
+  if (+month < 1 || +month > 12) {
+    throw new Error('Month must be between 1 and 12');
+  }
+  if (+day < 1 || +day > 31) {
+    throw new Error('Day must be between 1 and 31');
+  }
+  if (+hour < 0 || +hour > 23) {
+    throw new Error('Hour must be between 0 and 23');
+  }
+  if (+minute < 0 || +minute > 59) {
+    throw new Error('Minute must be between 0 and 59');
+  }
+  if (+second < 0 || +second > 59) {
+    throw new Error('Second must be between 0 and 59');
+  }
+}
+
+// Clear errors on input
+watch(epochInput, () => {
+  epochInputError.value = null;
+});
+
+watch(dateParts, () => {
+  dateInputError.value = null;
+}, { deep: true });
 </script>
 
 <template>
@@ -51,6 +106,16 @@ function pad(value: string): string {
       <div class="mb-2 font-semibold">
         Epoch to Date
       </div>
+
+      <div class="mb-2 text-xs text-neutral-400">
+        Epoch is interpreted as:
+        <ul class="mt-1 list-disc pl-4">
+          <li><strong>10 digits</strong> → seconds (e.g. <code>1718822594</code>)</li>
+          <li><strong>13 digits</strong> → milliseconds (e.g. <code>1718822594000</code>)</li>
+        </ul>
+        Epoch values outside supported JavaScript range (±8.64e15) may result in invalid dates.
+      </div>
+
       <c-input-text
         v-model:value="epochInput"
         placeholder="Enter epoch timestamp (e.g. 1718822594)"
@@ -61,10 +126,15 @@ function pad(value: string): string {
         Convert to Date
       </c-button>
 
-      <div v-if="dateOutput" class="mt-4 text-sm text-green-400">
-        Human-Readable Date: <strong>{{ dateOutput }}</strong>
+      <div v-if="dateOutput" class="mt-4 text-sm text-green-400 space-y-1">
+        <div>Local Time: <strong>{{ dateOutput.local }}</strong></div>
+        <div>GMT (UTC): <strong>{{ dateOutput.utc }}</strong></div>
       </div>
     </div>
+
+    <c-alert v-if="epochInputError" type="error" class="mb-4 mt-4">
+      {{ epochInputError }}
+    </c-alert>
 
     <!-- Date to Epoch -->
     <div class="mb-8">
@@ -99,17 +169,22 @@ function pad(value: string): string {
         </div>
       </div>
 
-      <c-button @click="convertDateToEpoch">
-        Convert to Epoch
-      </c-button>
+      <div class="mt-2 flex gap-4">
+        <c-button @click="convertDateToEpochLocal">
+          Convert to Epoch (Local)
+        </c-button>
+        <c-button @click="convertDateToEpochUTC">
+          Convert to Epoch (UTC)
+        </c-button>
+      </div>
 
       <div v-if="epochOutput" class="mt-4 text-sm text-green-400">
         Epoch Timestamp: <strong>{{ epochOutput }}</strong>
       </div>
     </div>
 
-    <c-alert v-if="error" type="error" class="mt-6">
-      {{ error }}
+    <c-alert v-if="dateInputError" type="error" class="mb-4 mt-4">
+      {{ dateInputError }}
     </c-alert>
   </c-card>
 </template>
