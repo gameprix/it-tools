@@ -26,6 +26,7 @@
         <div v-for="option in options" flex justify-center>
           <c-input-text
             v-model:value="optionsInput[option]"
+            :key="option"
             label-position="left"
             label-width="130px"
             label-align="left"
