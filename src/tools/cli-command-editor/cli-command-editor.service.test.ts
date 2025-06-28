@@ -103,18 +103,16 @@ describe('cli-command-editor', () => {
           "-d-id-1dfsj": "",
           "-p-id-fdsd": "4444:3333",
           "-p-id-fddd": "3333:4444",
-          "-e-id-ckslc": "CLICKHOUSE_PASSWORD=nopassword",
           "--name-id-nnnn": "clickhouse-server",
           "--ulimit-id-uuuu": "nofile=3333:4444",
         }, {
           "-d-id-1dfsj": "",
           "-p-id-fdsd": "4444:3333",
           "-p-id-fddd": "3333:4444",
-          "-e-id-ckslc": "CLICKHOUSE_PASSWORD=nopassword",
           "--name-id-nnnn": "clickhouse-server",
           "--ulimit-id-uuuu": "nofile=3333:4444",
-        }, "docker run -d -p 18123:8123 -p 19000:9000 -e CLICKHOUSE_PASSWORD=changeme --name some-clickhouse-server --ulimit nofile=262144:262144 clickhouse/clickhouse-server")
-      ).toEqual("docker run -d -p 4444:3333 -p 3333:4444 -e CLICKHOUSE_PASSWORD=nopassword --name clickhouse-server --ulimit nofile=3333:4444 clickhouse/clickhouse-server");
+        }, "docker run -d -p 18123:8123 -p 19000:9000 --name some-clickhouse-server --ulimit nofile=262144:262144 clickhouse/clickhouse-server")
+      ).toEqual("docker run -d -p 4444:3333 -p 3333:4444 --name clickhouse-server --ulimit nofile=3333:4444 clickhouse/clickhouse-server");
     });
 
     it("returns the edited command when options object and CLI options order doesn't match", () => {
