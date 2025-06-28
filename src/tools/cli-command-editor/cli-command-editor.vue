@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import * as service from "./cli-command-editor.service"
-  const inputCommand = ref("");
-  const options = computed(() => service.extractOptions(inputCommand.value));
-  const optionsObject = computed(() => service.buildOptionsObject(options.value));
-  const optionsInput = ref<{ [k: string]: string }>(optionsObject.value);
-  let command = ref("");
+import * as service from './cli-command-editor.service';
+
+const inputCommand = ref('');
+const options = computed(() => service.extractOptions(inputCommand.value));
+const optionsObject = computed(() => service.buildOptionsObject(options.value));
+const optionsInput = ref<{ [k: string]: string }>(optionsObject.value);
+const command = ref('');
 </script>
 
 <template>
@@ -20,13 +21,11 @@
           :placeholder="$t('tools.cli-command-editor.placeholder')"
           :aria-placeholder="$t('tools.cli-command-editor.placeholder')"
           raw-text
-          
-          @update:value="() => {command = inputCommand}"
+          @update:value="() => { command = inputCommand }"
         />
-        <div v-for="option in options" flex justify-center>
+        <div v-for="option in options" :key="option" flex justify-center>
           <c-input-text
             v-model:value="optionsInput[option]"
-            :key="option"
             label-position="left"
             label-width="130px"
             label-align="left"
@@ -34,22 +33,19 @@
             :aria-label="service.sanitizeOption(option)"
             :placeholder="service.sanitizeOption(option)"
             :aria-placeholder="service.sanitizeOption(option)"
-            @update:value="() => {command = service.buildEditedCommand(optionsInput, optionsObject, inputCommand)}"
             mt-6
+            @update:value="() => { command = service.buildEditedCommand(optionsInput, optionsObject, inputCommand) }"
           />
         </div>
 
         <c-text-copyable
-          :value="command"
           v-if="command"
+          :value="command"
           font-mono
           :show-icon="false"
-          mt-6 
+          mt-6
         />
       </n-gi>
     </n-grid>
   </c-card>
 </template>
-
-<style lang="less" scoped>
-</style>

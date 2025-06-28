@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Tool - Cli command editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,9 +7,5 @@ test.describe('Tool - Cli command editor', () => {
 
   test('Has correct title', async ({ page }) => {
     await expect(page).toHaveTitle('Cli command editor - IT Tools');
-  });
-
-  test('', async ({ page }) => {
-
   });
 });
