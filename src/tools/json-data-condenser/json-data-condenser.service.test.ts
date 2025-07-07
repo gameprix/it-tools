@@ -1,24 +1,26 @@
 import { describe, expect, it } from 'vitest';
-import { condenseJsonStructures } from './json-data-condenser.service';
+import { type JsonValue, condenseJsonStructures } from './json-data-condenser.service';
+
+const asJsonValue = <T extends JsonValue>(val: T): T => val;
 
 describe('condenseJsonStructures', () => {
   it('removes duplicate object structures in an array', () => {
-    const input = {
+    const input = asJsonValue({
       users: [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
+        { id: 1, name: 'Alice', email: null },
+        { id: 2, name: 'Bob', email: null },
+        { id: 3, name: 'Charlie', email: null },
         { id: 4, name: 'David', email: 'david@example.com' },
-        { id: 5, name: 'Eve' },
+        { id: 5, name: 'Eve', email: null },
       ],
       status: 'active',
-    };
+    });
 
     const output = condenseJsonStructures(input);
 
     expect(output).toEqual({
       users: [
-        { id: 1, name: 'Alice' },
+        { id: 1, name: 'Alice', email: null },
         { id: 4, name: 'David', email: 'david@example.com' },
       ],
       status: 'active',
@@ -26,14 +28,14 @@ describe('condenseJsonStructures', () => {
   });
 
   it('keeps all non-array values intact', () => {
-    const input = {
+    const input = asJsonValue({
       status: 'ok',
       count: 5,
       success: true,
       metadata: {
         source: 'api',
       },
-    };
+    });
 
     const output = condenseJsonStructures(input);
 
@@ -41,7 +43,7 @@ describe('condenseJsonStructures', () => {
   });
 
   it('keeps non-object array values', () => {
-    const input = [1, 2, 3, 'a', true, null];
+    const input = asJsonValue([1, 2, 3, 'a', true, null]);
 
     const output = condenseJsonStructures(input);
 
@@ -49,20 +51,20 @@ describe('condenseJsonStructures', () => {
   });
 
   it('recursively condenses nested object arrays', () => {
-    const input = {
+    const input = asJsonValue({
       groups: [
         {
           name: 'Group A',
           users: [
-            { id: 1, name: 'Alice' },
-            { id: 2, name: 'Bob' },
-            { id: 3, name: 'Charlie' },
+            { id: 1, name: 'Alice', email: null },
+            { id: 2, name: 'Bob', email: null },
+            { id: 3, name: 'Charlie', email: null },
             { id: 4, name: 'David', email: 'david@example.com' },
-            { id: 5, name: 'Eve' },
+            { id: 5, name: 'Eve', email: null },
           ],
         },
       ],
-    };
+    });
 
     const output = condenseJsonStructures(input);
 
@@ -71,7 +73,7 @@ describe('condenseJsonStructures', () => {
         {
           name: 'Group A',
           users: [
-            { id: 1, name: 'Alice' },
+            { id: 1, name: 'Alice', email: null },
             { id: 4, name: 'David', email: 'david@example.com' },
           ],
         },

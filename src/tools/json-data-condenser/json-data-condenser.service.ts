@@ -1,4 +1,4 @@
-type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
 function getKeySignature(obj: Record<string, any>): string {
   // Create a normalized signature string of sorted keys
@@ -6,6 +6,12 @@ function getKeySignature(obj: Record<string, any>): string {
 }
 
 export function condenseJsonStructures(data: JsonValue): JsonValue {
+  // Handle primitive values
+  if (typeof data !== 'object' || data === null) {
+    return data;
+  }
+
+  // Handle arrays
   if (Array.isArray(data)) {
     const seenSignatures = new Set<string>();
     const result: JsonValue[] = [];
@@ -27,13 +33,10 @@ export function condenseJsonStructures(data: JsonValue): JsonValue {
     return result;
   }
 
-  if (typeof data === 'object' && data !== null) {
-    const result: Record<string, JsonValue> = {};
-    for (const key in data) {
-      result[key] = condenseJsonStructures(data[key]);
-    }
-    return result;
+  // Handle plain objects
+  const result: Record<string, JsonValue> = {};
+  for (const key in data) {
+    result[key] = condenseJsonStructures(data[key]);
   }
-
-  return data;
+  return result;
 }
