@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { type DateParts, dateToEpoch, epochToDate, getISODateString } from './epoch-converter.service.ts';
+import { type DateParts, dateToEpoch, epochToDate, getISODateString } from './epoch-converter.service';
 
 const epochInput = ref('');
 const dateOutput = ref<{ local: string; utc: string } | null>(null);
@@ -41,7 +41,7 @@ function convertDateToEpochLocal() {
   try {
     validateDateParts(dateParts.value);
     const isoString = getISODateString(dateParts.value);
-    epochOutput.value = dateToEpoch(isoString);
+    epochOutput.value = dateToEpoch(isoString).toString();
     dateInputError.value = null;
   }
   catch (e: any) {
@@ -57,7 +57,7 @@ function convertDateToEpochUTC() {
   try {
     validateDateParts(dateParts.value);
     const isoString = getISODateString(dateParts.value);
-    epochOutput.value = dateToEpoch(isoString, { utc: true });
+    epochOutput.value = dateToEpoch(isoString, { parseAsUTC: true }).toString();
     dateInputError.value = null;
   }
   catch (e: any) {

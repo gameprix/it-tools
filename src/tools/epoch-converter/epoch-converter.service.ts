@@ -14,12 +14,12 @@ export interface DateParts {
  * Converts a Unix epoch timestamp (in seconds or milliseconds) to a human-readable date.
  *
  * @param epoch - The epoch timestamp to convert (number or string).
- * @param options - Optional locale and timeZone settings for local time formatting.
+ * @param options - Optional timeZone setting for local time formatting.
  * @returns An object with both the local formatted string and UTC string.
  */
 export function epochToDate(
   epoch: string | number,
-  options?: { timeZone?: string; locale?: string },
+  options?: { timeZone?: string },
 ): { local: string; utc: string } {
   const num = typeof epoch === 'string' ? Number.parseInt(epoch, 10) : epoch;
 
@@ -34,8 +34,8 @@ export function epochToDate(
 
   const date = new Date(timestampInMs);
 
-  const local = date.toLocaleString(options?.locale || 'en-US', {
-    timeZone: options?.timeZone,
+  const formatOptions: Intl.DateTimeFormatOptions = {
+    timeZoneName: 'short',
     weekday: 'short',
     year: 'numeric',
     month: 'short',
@@ -44,12 +44,22 @@ export function epochToDate(
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-    timeZoneName: 'short',
+  };
+
+  const localFormatter = new Intl.DateTimeFormat('en-US', {
+    ...formatOptions,
+    timeZone: options?.timeZone,
   });
 
-  const utc = date.toUTCString();
+  const utcFormatter = new Intl.DateTimeFormat('en-US', {
+    ...formatOptions,
+    timeZone: 'UTC',
+  });
 
-  return { local, utc };
+  return {
+    local: localFormatter.format(date),
+    utc: utcFormatter.format(date),
+  };
 }
 
 /**
@@ -65,13 +75,29 @@ export function dateToEpoch(
     parseAsUTC?: boolean // if true, the date string will be parsed as UTC
   },
 ): number {
-  const shouldNormalizeToUTC = options?.parseAsUTC === true && !dateString.endsWith('Z');
-  const normalizedDateString = shouldNormalizeToUTC
-    ? `${dateString}Z`
-    : dateString;
+  const { parseAsUTC } = options ?? {};
+
+  let normalizedDateString: string = dateString;
+  if (parseAsUTC && !dateString.endsWith('Z')) {
+    normalizedDateString = `${dateString}Z`;
+  }
+  // eslint-disable-next-line no-console
+  console.log(`test = ${normalizedDateString}`);
+  // else {
+  //   // Manually compute local timezone offset and append it
+  //   const tempDate = new Date(`${dateString}`);
+  //   const offsetMinutes = tempDate.getTimezoneOffset();
+  //   const sign = offsetMinutes <= 0 ? '+' : '-';
+  //   const absOffset = Math.abs(offsetMinutes);
+  //   const hours = String(Math.floor(absOffset / 60)).padStart(2, '0');
+  //   const minutes = String(absOffset % 60).padStart(2, '0');
+  //   const offset = `${sign}${hours}:${minutes}`;
+  //   normalizedDateString = `${dateString}${offset}`;
+  // }
 
   const date = new Date(normalizedDateString);
-
+  // eslint-disable-next-line no-console
+  console.log(date);
   if (Number.isNaN(date.getTime())) {
     throw new TypeError('Invalid date string');
   }

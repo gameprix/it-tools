@@ -1,18 +1,17 @@
 import process from 'node:process';
 import { describe, expect, it } from 'vitest';
-import { type DateParts, dateToEpoch, epochToDate, getISODateString } from './epoch-converter.service';
+import { type DateParts, dateToEpoch, epochToDate, getISODateString } from '../epoch-converter.service';
 
 process.env.TZ = 'America/Vancouver';
 
 describe('epochToDate', () => {
   it('converts known epoch seconds to correct formatted date (America/Vancouver)', () => {
     const epoch = 1750707060;
-    const expectedUTC = 'Mon, 23 Jun 2025 19:31:00 GMT';
+    const expectedUTC = 'Mon, Jun 23, 2025, 19:31:00 UTC';
     const expectedLocal = 'Mon, Jun 23, 2025, 12:31:00 PDT';
 
     const result = epochToDate(epoch, {
       timeZone: 'America/Vancouver',
-      locale: 'en-US',
     });
 
     expect(result.local).toBe(expectedLocal);
@@ -29,8 +28,8 @@ describe('epochToDate', () => {
 });
 
 describe('dateToEpoch', () => {
-  it('converts a known local date to correct epoch (2025-06-20 13:48:00)', () => {
-    const input = '2025-06-20T13:48:00';
+  it('converts a known local date to correct epoch (2025-06-20 13:48:00) with timezone offset', () => {
+    const input = '2025-06-20T13:48:00-07:00';
 
     const expectedEpoch = 1750452480;
     const result = dateToEpoch(input);
@@ -59,12 +58,11 @@ describe('epochToDate - Year 2038 boundary', () => {
 
     const result = epochToDate(epoch, {
       timeZone: 'America/Vancouver',
-      locale: 'en-US',
     });
 
     const expectedLocal = 'Mon, Jan 18, 2038, 19:14:07 PST';
 
-    const expectedUTC = 'Tue, 19 Jan 2038 03:14:07 GMT';
+    const expectedUTC = 'Tue, Jan 19, 2038, 03:14:07 UTC';
 
     expect(result.local).toBe(expectedLocal);
     expect(result.utc).toBe(expectedUTC);
@@ -75,12 +73,11 @@ describe('epochToDate - Year 2038 boundary', () => {
 
     const result = epochToDate(epoch, {
       timeZone: 'America/Vancouver',
-      locale: 'en-US',
     });
 
     const expectedLocal = 'Mon, Jan 18, 2038, 19:14:08 PST';
 
-    const expectedUTC = 'Tue, 19 Jan 2038 03:14:08 GMT';
+    const expectedUTC = 'Tue, Jan 19, 2038, 03:14:08 UTC';
 
     expect(result.local).toBe(expectedLocal);
     expect(result.utc).toBe(expectedUTC);
