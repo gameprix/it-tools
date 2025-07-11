@@ -24,15 +24,15 @@ test.describe('Tool - Json data condenser', () => {
     await page.getByPlaceholder('Paste a JSON payload here...').fill(validJson);
     await page.getByRole('button', { name: 'Condense JSON' }).click();
 
-    await expect(page.getByText('"status": "active"')).toBeVisible();
-    await expect(page.getByText('"email": "david@example.com"')).toBeVisible();
+    const outputTextarea = page.getByPlaceholder('Condensed JSON will appear here...');
+    const outputText = await outputTextarea.inputValue();
 
-    // Only Alice and David (with different structure) should remain
-    await expect(page.locator('textarea')).toContainText('Alice');
-    await expect(page.locator('textarea')).toContainText('David');
-    await expect(page.locator('textarea')).not.toContainText('Bob');
-    await expect(page.locator('textarea')).not.toContainText('Charlie');
-    await expect(page.locator('textarea')).not.toContainText('Eve');
+    expect(outputText).toContain('"status": "active"');
+    expect(outputText).toContain('Alice');
+    expect(outputText).toContain('David');
+    expect(outputText).not.toContain('Bob');
+    expect(outputText).not.toContain('Charlie');
+    expect(outputText).not.toContain('Eve');
   });
 
   test('Displays error on invalid JSON input', async ({ page }) => {

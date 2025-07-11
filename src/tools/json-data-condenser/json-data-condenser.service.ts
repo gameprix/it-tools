@@ -18,14 +18,13 @@ export function condenseJsonStructures(data: JsonValue): JsonValue {
 
     for (const item of data) {
       if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
-        const sig = getKeySignature(item);
-        if (!seenSignatures.has(sig)) {
-          seenSignatures.add(sig);
+        const signature = getKeySignature(item as Record<string, JsonValue>);
+        if (!seenSignatures.has(signature)) {
+          seenSignatures.add(signature);
           result.push(condenseJsonStructures(item));
         }
       }
       else {
-        // Keep non-object array items
         result.push(condenseJsonStructures(item));
       }
     }
