@@ -87,6 +87,17 @@ function validateDateParts(parts: DateParts): void {
   if (+second < 0 || +second > 59) {
     throw new Error('Second must be between 0 and 59');
   }
+
+  // Cross-check full date validity
+  const y = +year;
+  const m = +month - 1;
+  const d = +day;
+
+  const constructed = new Date(y, m, d);
+
+  if (constructed.getUTCFullYear() !== y || constructed.getUTCMonth() !== m || constructed.getUTCDate() !== m) {
+    throw new TypeError('Invalid date string');
+  }
 }
 
 // Clear errors on input
@@ -183,7 +194,7 @@ watch(dateParts, () => {
       </div>
     </div>
 
-    <c-alert v-if="dateInputError" type="error" class="mb-4 mt-4">
+    <c-alert v-if="dateInputError" type="error" class="validateError mb-4 mt-4">
       {{ dateInputError }}
     </c-alert>
   </c-card>

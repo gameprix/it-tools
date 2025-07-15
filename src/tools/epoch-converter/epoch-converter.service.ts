@@ -81,23 +81,8 @@ export function dateToEpoch(
   if (parseAsUTC && !dateString.endsWith('Z')) {
     normalizedDateString = `${dateString}Z`;
   }
-  // eslint-disable-next-line no-console
-  console.log(`test = ${normalizedDateString}`);
-  // else {
-  //   // Manually compute local timezone offset and append it
-  //   const tempDate = new Date(`${dateString}`);
-  //   const offsetMinutes = tempDate.getTimezoneOffset();
-  //   const sign = offsetMinutes <= 0 ? '+' : '-';
-  //   const absOffset = Math.abs(offsetMinutes);
-  //   const hours = String(Math.floor(absOffset / 60)).padStart(2, '0');
-  //   const minutes = String(absOffset % 60).padStart(2, '0');
-  //   const offset = `${sign}${hours}:${minutes}`;
-  //   normalizedDateString = `${dateString}${offset}`;
-  // }
 
   const date = new Date(normalizedDateString);
-  // eslint-disable-next-line no-console
-  console.log(date);
   if (Number.isNaN(date.getTime())) {
     throw new TypeError('Invalid date string');
   }
