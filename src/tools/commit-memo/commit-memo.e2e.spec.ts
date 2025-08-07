@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Tool - Conventional Commit Cheatsheet', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,7 +9,7 @@ test.describe('Tool - Conventional Commit Cheatsheet', () => {
     await expect(page).toHaveTitle('Conventional Commit Cheatsheet - IT Tools');
   });
 
-  test('', async ({ page }) => {
+  test('', async ({ _page }) => {
 
   });
 });
