@@ -9,7 +9,7 @@ test.describe('Tool - Conventional Commit Cheatsheet', () => {
     await expect(page).toHaveTitle('Conventional Commit Cheatsheet - IT Tools');
   });
 
-  test('', async ({ _page }) => {
+  test('', async ({ page }) => {
 
   });
 });
